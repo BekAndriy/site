@@ -1,33 +1,33 @@
-const VK_ID = 5849900;
-// const SECURE_KEY = 'uKvdmiPplKdFMoXGtRsS'
-var user_ID;
+// const VK_ID = 5849900;
+// // const SECURE_KEY = 'uKvdmiPplKdFMoXGtRsS'
+// var user_ID;
 
-window.VK.init({
-    apiId: VK_ID,
-    scope: 'photos'
-});
+// window.VK.init({
+//     apiId: VK_ID,
+//     scope: 'photos'
+// });
 
-// var my_id = '';
+// // var my_id = '';
 
-export default {
-	login: () => {
-		VK.Auth.login((param) => {
-	        console.log('logined: ',param)
-	     });
+// export default {
+// 	login: () => {
+// 		VK.Auth.login((param) => {
+// 	        console.log('logined: ',param);
+// 	     });
 
-		VK.Auth.getLoginStatus((params) => {
-	        // console.log('User params: ', params);
-	        user_ID = params.session.mid;
-	        console.log('User ID: ',user_ID);
-	     })
-	},
+// 		VK.Auth.getLoginStatus((params) => {
+// 	        // console.log('User params: ', params);
+// 	        user_ID = params.session.mid;
+// 	        console.log('User ID: ',user_ID);
+// 	     })
+// 	},
 
-	logout: () => {
-		VK.Auth.logout((param) => {
-			console.log('logout: ', param);
-		})
-	}
-}
+// 	logout: () => {
+// 		VK.Auth.logout((param) => {
+// 			console.log('logout: ', param);
+// 		})
+// 	}
+// }
 
 
 

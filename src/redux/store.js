@@ -1,6 +1,7 @@
-import { createStore } from 'redux';
+export const OPEN_USER_SETTINGS = 'OPEN_USER_SETTINGS';
+export const USER_PAGE = 'USER_PAGE';
 
-const playlist = function (state = [], action) {
+export function playlist (state = [], action) {
 	if (action.type === 'ADD_TRACK') {
 		return [
 			...state,
@@ -10,5 +11,28 @@ const playlist = function (state = [], action) {
 	return state;
 }
 
-export default createStore(playlist);
-module.exports = playlist;
+export function search(state = [], action) {
+	switch (action.type) {
+		case OPEN_USER_SETTINGS:
+			return [
+				...state,
+				{
+					search: action.search,
+				}
+			]
+		default:
+		return state
+	}
+}
+
+export function userPage(state = [], action) {
+	switch (action.type) {
+		case USER_PAGE:
+			return [
+				...state,
+				action.user
+			]
+		default:
+		return state
+	}
+}

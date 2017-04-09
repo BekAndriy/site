@@ -9,7 +9,7 @@ require('./TitlePage.less');
 const TitlePage =  React.createClass({
     render: function(){
         let { playload } = this.props;
-        let currentName = playload[playload.length - 1];
+        let currentName = playload.playlist[playload.playlist.length - 1];
         return (
             <div className="title-page">
                 <div className="title-content-wrap">
@@ -18,7 +18,7 @@ const TitlePage =  React.createClass({
                     <Breadcrumbs
                         displayMissingText={currentName}
                         routes={this.props.routes}
-                        separator="&#160;&#160; / &#160;&#160;" // with spacing
+                        separator="&#160;&#160; / &#160;&#160;"
                         params={this.props.params}
                     />
                 </div>

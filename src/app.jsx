@@ -2,7 +2,7 @@ var React = require('react');
 import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import store from './redux/store'
+import store from './redux/reducer.js'
 
 import ContentGrid from './components/content_grid.jsx';
 import Header from './components/Header.jsx';
@@ -10,9 +10,11 @@ import Gallery from './components/gallery/Gallery.jsx';
 import About from './components/about/About.jsx';
 import Acount from './components/Acount.jsx';
 import Albums from './components/gallery/Albums.jsx';
+import Albom from './components/gallery/Albom.jsx';
 import Gmap from './components/location/Gmap.jsx';
 import FormRegistration from './components/forms/FormRegistration.jsx'
 import FilteringGallery from './components/gallery/FilteringGallery.jsx';
+import Events from './components/events/Events.jsx';
 import vkApi from './api/vk.api.js'
 function select(state) {
   return state.payload
@@ -22,9 +24,7 @@ let currentValue, aa;
 function handleChange() {
   // let previousValue = currentValue
   currentValue = store.getState();
-  console.log(currentValue);
   aa = currentValue ? currentValue[currentValue.length-1] : '';
-  console.log(aa);
 }
 
 function getName(state){
@@ -53,13 +53,14 @@ export default React.createClass({
                     <IndexRoute component={ContentGrid} />
                     <Route name='Map' path='map' component={Gmap} />
                     <Route name='Gallery' path='gallery' component={FilteringGallery}>
-                        <Route name='Albums' path='albums' component={Albums}>
-                            <Route name='profile' path=':name' component={Gallery}>
-                            </ Route>
+                    </ Route>
+                    <Route name='Albums' path='albums' component={Albums}>
+                        <Route name='Albom' path='id:id' component={Gallery}>
                         </ Route>
                     </ Route>
                     <Route name='About' path='about' component={About} />
                     <Route name='Registration' path='registration' component={FormRegistration} />
+                    <Route name='Events' path='events' component={Events} />
                     <Route path='post=:id' component={Acount} />
                 </ Route>
             </ Router>
@@ -67,4 +68,3 @@ export default React.createClass({
         ) 
     }
 })
-// name={getName(store.getState())}

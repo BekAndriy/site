@@ -1,13 +1,14 @@
 import React from 'react';
 import Item from './Item.jsx';
 import { connect } from 'react-redux';
-require('../redux/store');
+import store  from '../redux/reducer.js';
 
 import InfiniteScroll from 'react-infinite-scroller';
 import BuildSliderItem from './BuildSliderItem.jsx';
 import participants from '../json/participents.json';
 import FilteringMainContent from './FilteringMainContent.jsx';
 import imagesLoaded from 'imagesloaded';
+
 require('./BuildSliderItem.less');
 require('jquery');
 
@@ -37,6 +38,34 @@ var ContentGrid = React.createClass({
                 transitionDuration: '0.5s'
             });
         });
+
+        let data = {
+            data_rev:null, 
+            data_cur: []
+        }
+        var handleChange = () => {
+            checkSearch(store.getState(), data, (msg) => {
+                if (location.hash.length > 2)
+                    location.hash = '/';
+                var searchList = participants.filter((el) => {
+                    return (el.name.toLowerCase()).indexOf(msg) > -1
+                })
+                if (msg.length < 1) {
+                    this.setState({
+                        items: participants,
+                        itemsInPage: participants.slice(0, 10)
+                    })
+                } else {
+                    this.setState({
+                        items: searchList,
+                        itemsInPage: searchList.slice(0, 10)
+                    })
+                }
+            })
+        }
+        
+        store.subscribe(handleChange);
+
     },
 
     componentDidUpdate: function(){
@@ -59,14 +88,12 @@ var ContentGrid = React.createClass({
                 this.setState({itemsInPage: this.state.items.slice(0,lengthArray)});
                 countLoad = 1;;
             },1000);
-                
          }
     },
 
     handlePreviewClick(elem) {
-        console.log(elem);
         let { name, id: messageId } = elem;
-        this.props.onAddTrack(name);
+        this.props.onAddTrack(name, elem);
         this.context.router.push(`/post=${messageId}`);
     },
 
@@ -86,15 +113,15 @@ var ContentGrid = React.createClass({
                         className="content-wrap" 
                         id="itemGrid" 
                         ref='itemGrid' >
+
                     { this.state.itemsInPage.map((elem, ind)=>{
+                        
                         return (
                         <div 
                             key={ind}
                             className={"product-item"} 
                         >   
-
                             <img src={"./assets/" + elem.image[0]} alt={elem.name} />
-
                             <div className="animated hover-block ">
                                 <div className="outer-hover-block-wrap">
                                     <div className="hover-block-wrap" 
@@ -116,16 +143,12 @@ var ContentGrid = React.createClass({
                                     <span className="heart">&#9825;</span>
                                 </div>
                             </div>
-
                             
                         </div>
                         )
-                        
                     })}
                 </ InfiniteScroll>
-                </div>
-                    
-            
+            </div>
         )
     }
 })
@@ -135,10 +158,20 @@ module.exports = connect(
     playload: state
   }),
   dispatch => ({
-    onAddTrack: (trackName) => {
-      dispatch({ type: 'ADD_TRACK', playload: trackName })
+    onAddTrack: (trackName, user) => {
+        dispatch({ type: 'ADD_TRACK', playload: trackName });
+        dispatch({ type: 'USER_PAGE', user });
     }
   })
 )(ContentGrid);
 
-/*<div className="age">Age: 23</div>*/
+function checkSearch( store, data, callback){
+    data.data_rev = data.data_cur;
+    data.data_cur  = store.search;
+    if ( data.data_cur.length && data.data_rev && data.img_rev !== data.data_cur ) {
+        let search = data.data_cur[data.data_cur.length - 1].search
+        
+        callback(search);
+        return store;
+     }
+ }

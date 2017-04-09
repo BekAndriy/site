@@ -28,7 +28,6 @@ const BuildSliderItem = React.createClass({
                                 {
                                     
                                     inde == 0 ? <img src={"./assets/" + (eleme)} /> : '' }
-                                
                             </div>
                         )
                 })}

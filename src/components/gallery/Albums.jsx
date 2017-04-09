@@ -14,58 +14,69 @@ var countLoad = 1;
 var Albums = React.createClass({
     getInitialState: function(){
         return {
-            items: participants,
-            itemsInPage: []
+
+            images: []
         }
     },
-    componentWillMount: function(){
-        this.setState({itemsInPage: this.state.items.slice(0, 10)})
+
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
     },
+
+    componentWillMount: function(){
+        $.ajax({
+            url: 'http://my-test.local/test.php',
+            type: 'POST',
+            data: {action: 'get_alboms'},
+            success: (data, textStatus, XMLHttpRequest) => {
+                let _data = JSON.parse(data);
+                this.setState({images: _data})
+            },
+            error: function(err){
+                console.log('Logout failed: ', err);
+            }
+        })
+    },
+
      componentDidMount: function(){
 
         var grid = document.getElementsByClassName('content-wrap')[0];
-        imagesLoaded( document.getElementsByClassName('content-wrap')[0], () => {
-            this.msnry = new Masonry( grid, {
-                itemSelector: '.alb-product-item',
-                gutter: 0,
-                transitionDuration: '0.5s'
+        if ($('.content-wrap').length) {
+            imagesLoaded( document.getElementsByClassName('content-wrap')[0], () => {
+                this.msnry = new Masonry( grid, {
+                    itemSelector: '.alb-product-item',
+                    gutter: 0,
+                    transitionDuration: '0.5s'
+                });
             });
-        });
+        }  
     },
 
     componentDidUpdate: function(){
-        imagesLoaded( document.getElementsByClassName('content-wrap')[0], () => {
-            this.msnry.reloadItems();
-            this.msnry.layout();
-        }); 
+        if ($('.content-wrap').length && $('.alb-product-item').length) {
+            imagesLoaded( document.getElementsByClassName('content-wrap')[0], () => {
+                this.msnry.reloadItems();
+                this.msnry.layout();
+            });
+        }
     },
 
     handleLoadMore: function(pageToLoad){
-        console.log('tttt')
-        let runLoadTimeout;
-        let lengthArray = this.state.itemsInPage.length;
 
-        if (!countLoad) {
-             
-             return '';
-         } else {
-             countLoad = 0;
-             runLoadTimeout = setTimeout( () => { 
-                 lengthArray += 10;
-                this.setState({itemsInPage: this.state.items.slice(0,lengthArray)});
-                countLoad = 1;;
-            },1000);
-                
-         }
     },
 
+    handleOpenAlboms(el) {
+        this.context.router.push(`/albums/id=${el.id}`);
+    },
+    
     render: function (){
         const styleLoaderItem = {
             width: '100%',
         }
-        return (
+        return ( 
                 <div>
-                <InfiniteScroll 
+                {this.props.children ? this.props.children : (
+                    <InfiniteScroll 
                         style={styleLoaderItem} 
                         hasMore={true}
                         threshold={500}
@@ -74,46 +85,31 @@ var Albums = React.createClass({
                         className="content-wrap" 
                         id="itemGrid" 
                         ref='itemGrid' >
-                    { this.state.itemsInPage.map((elem, ind)=>{
-                        return (
-                        <div 
-                            key={ind}
-                            className={"alb-product-item"}
-                            style={{'background': 'url(assets/'+(elem.image[0]) + ') no-repeat',
-                                backgroundSize: 'cover'}}
-                        >
-                            /*this must be hover block*/
-                            
-                        </div>
-                        )
-                        
-                    })}
+                    {
+                        this.state.images.map((el, ind) => {
+                            return (
+                                    <div key={ind} className="single-albom" onClick={this.handleOpenAlboms.bind(null, el)}>
+                                        <div className="post-name">{el.post_name}</div>
+                                        <div className="created">{el.created}</div>
+                                        <div className="description">{el.description}</div>
+                                        <div className="create_user">{el.FirstName + " | " + el.LastName}</div>
+                                    </div>
+                                )
+                            })
+                        }
                 </ InfiniteScroll>
+
+
+                    )}
                 </div>
                     
             
         )
     }
 })
-
 module.exports = connect(
   state => ({
   }),
   dispatch => ({
   })
 )(Albums);
-
-
-// <div className="animated hover-block ">
-//                                 <div className="outer-hover-block-wrap">
-//                                     <div className="hover-block-wrap">
-//                                         <div className="name">{elem.name}</div>
-                                        
-//                                         <div className="description">
-//                                             <span className="text-wrap">{elem.description}</span>
-//                                         </div>
-
-//                                         <div className="age">Age: 23</div>
-//                                     </div>
-//                                 </div>
-//                             </div>
